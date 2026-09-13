@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  weather-hub:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: weather-hub
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_SITE_NAME=Weather Hub
+      - SITE_COMMERCIAL=${SITE_COMMERCIAL:-true}
+      - METNO_ENABLED=${METNO_ENABLED:-true}
+      - METNO_USER_AGENT=${METNO_USER_AGENT:-WeatherHub/1.0 (https://weatherhub.local contact@weatherhub.local)}
+      - NOAA_ENABLED=${NOAA_ENABLED:-true}
+      - NOAA_USER_AGENT=${NOAA_USER_AGENT:-WeatherHub/1.0 (https://weatherhub.local contact@weatherhub.local)}
+      - FMI_ENABLED=${FMI_ENABLED:-true}
+      - MSC_GEOMET_ENABLED=${MSC_GEOMET_ENABLED:-true}
+      - WEATHERAPI_ENABLED=${WEATHERAPI_ENABLED:-true}
+      - WEATHERAPI_API_KEY=${WEATHERAPI_API_KEY:-}
+      - VISUALCROSSING_ENABLED=${VISUALCROSSING_ENABLED:-true}
+      - VISUALCROSSING_API_KEY=${VISUALCROSSING_API_KEY:-}
+      - METOFFICE_ENABLED=${METOFFICE_ENABLED:-true}
+      - METOFFICE_API_KEY=${METOFFICE_API_KEY:-}
+      - OPENMETEO_ENABLED=${OPENMETEO_ENABLED:-false}
+      - OPENMETEO_MODE=${OPENMETEO_MODE:-public}
+      - WEATHER_CACHE_SECONDS=${WEATHER_CACHE_SECONDS:-900}
+      - HOURLY_CACHE_SECONDS=${HOURLY_CACHE_SECONDS:-900}
+      - DAILY_CACHE_SECONDS=${DAILY_CACHE_SECONDS:-1800}
+      - GEOCODING_CACHE_SECONDS=${GEOCODING_CACHE_SECONDS:-86400}
+      - AQI_CACHE_SECONDS=${AQI_CACHE_SECONDS:-1800}
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:3000/api/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'

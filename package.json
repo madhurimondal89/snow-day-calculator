@@ -1,0 +1,30 @@
+{
+  "name": "snow-day-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Snow Day Calculator Free - Weather-based snow day probability calculator & winter forecast platform",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.475.0",
+    "maplibre-gl": "^4.7.1",
+    "next": "^14.2.23",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.19",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.23",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  }
+}
