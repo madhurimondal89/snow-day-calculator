@@ -37,15 +37,69 @@ interface WeatherMapProps {
   interactive?: boolean;
 }
 
-// OpenFreeMap vector style specifications (100% free, zero watermarks, no API keys required)
-const getMapStyleUrl = (styleType: MapTileStyle): string => {
+// High-speed, globally reliable tile sources (Zero watermark, zero keys, 100% global CDN uptime)
+const getMapStyleSpec = (styleType: MapTileStyle): maplibregl.StyleSpecification => {
   if (styleType === 'dark') {
-    return 'https://tiles.openfreemap.org/styles/dark';
+    return {
+      version: 8,
+      sources: {
+        'esri-dark-base': {
+          type: 'raster',
+          tiles: [
+            'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+          ],
+          tileSize: 256,
+          attribution: '© Esri, HERE, Garmin, © OpenStreetMap contributors',
+        },
+        'esri-dark-labels': {
+          type: 'raster',
+          tiles: [
+            'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+          ],
+          tileSize: 256,
+        },
+      },
+      layers: [
+        { id: 'esri-dark-base-layer', type: 'raster', source: 'esri-dark-base', minzoom: 0, maxzoom: 19 },
+        { id: 'esri-dark-labels-layer', type: 'raster', source: 'esri-dark-labels', minzoom: 0, maxzoom: 19 },
+      ],
+    };
   }
   if (styleType === 'streets') {
-    return 'https://tiles.openfreemap.org/styles/liberty';
+    return {
+      version: 8,
+      sources: {
+        'esri-streets': {
+          type: 'raster',
+          tiles: [
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+          ],
+          tileSize: 256,
+          attribution: '© Esri, OpenStreetMap contributors',
+        },
+      },
+      layers: [
+        { id: 'esri-streets-layer', type: 'raster', source: 'esri-streets', minzoom: 0, maxzoom: 19 },
+      ],
+    };
   }
-  return 'https://tiles.openfreemap.org/styles/positron';
+  // Default light: OpenStreetMap Clean Light
+  return {
+    version: 8,
+    sources: {
+      'osm-light': {
+        type: 'raster',
+        tiles: [
+          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        ],
+        tileSize: 256,
+        attribution: '© OpenStreetMap contributors',
+      },
+    },
+    layers: [
+      { id: 'osm-light-layer', type: 'raster', source: 'osm-light', minzoom: 0, maxzoom: 19 },
+    ],
+  };
 };
 
 interface ClickedLocationData {
@@ -173,7 +227,7 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: getMapStyleUrl(tileStyle),
+      style: getMapStyleSpec(tileStyle),
       center: [initialLon, initialLat],
       zoom: initialZoom,
       attributionControl: false,
@@ -183,7 +237,7 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
     map.addControl(
       new maplibregl.AttributionControl({
         compact: true,
-        customAttribution: '© OpenFreeMap, © OpenStreetMap contributors',
+        customAttribution: '© Esri, © OpenStreetMap contributors',
       }),
       'bottom-right'
     );
@@ -277,7 +331,7 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
   // Update style dynamically when tileStyle changes
   useEffect(() => {
     if (mapInstanceRef.current) {
-      mapInstanceRef.current.setStyle(getMapStyleUrl(tileStyle));
+      mapInstanceRef.current.setStyle(getMapStyleSpec(tileStyle));
     }
   }, [tileStyle]);
 
