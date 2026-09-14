@@ -7,6 +7,7 @@ import {
   LocationInfo,
 } from '../types/weather';
 import { calculateFeelsLike, generateRealWeatherSummary } from './met-norway.normalizer';
+import { calculateSunriseSunset } from '../utils';
 
 export interface OpenMeteoResponse {
   latitude: number;
@@ -175,8 +176,12 @@ export function normalizeOpenMeteoResponse(
   const condition = mapWmoCodeToCondition(cur.weather_code);
   const iconCode = mapWmoCodeToIcon(cur.weather_code, isDay);
 
-  const todaySunrise = data.daily?.sunrise?.[0] || `${cur.time.split('T')[0]}T06:00`;
-  const todaySunset = data.daily?.sunset?.[0] || `${cur.time.split('T')[0]}T18:30`;
+  const lat = locationInfo.lat ?? data.latitude ?? 0;
+  const lon = locationInfo.lon ?? data.longitude ?? 0;
+  const fallbackSun = calculateSunriseSunset(lat, lon, new Date(cur.time));
+
+  const todaySunrise = data.daily?.sunrise?.[0] || fallbackSun.sunrise;
+  const todaySunset = data.daily?.sunset?.[0] || fallbackSun.sunset;
 
   const current: CurrentWeather = {
     time: cur.time,

@@ -6,6 +6,7 @@ import {
   WeatherIconCode,
   LocationInfo,
 } from '../types/weather';
+import { calculateSunriseSunset } from '../utils';
 
 export interface MetNorwayTimeseriesItem {
   time: string;
@@ -224,10 +225,12 @@ export function normalizeMetNorwayResponse(
   const dewPoint = instant.dew_point_temperature;
   const feelsLike = calculateFeelsLike(temp, humidity, windSpeed);
 
-  // Approximate sunrise/sunset if not provided by provider (solar calculation based on coordinates)
-  const todayDateStr = first.time.split('T')[0];
-  const sunrise = `${todayDateStr}T06:00:00Z`;
-  const sunset = `${todayDateStr}T18:30:00Z`;
+  // Accurate astronomical sunrise/sunset calculation based on coordinates
+  const lat = locationInfo.lat ?? data.geometry?.coordinates?.[1] ?? 0;
+  const lon = locationInfo.lon ?? data.geometry?.coordinates?.[0] ?? 0;
+  const sunTimes = calculateSunriseSunset(lat, lon, new Date(first.time));
+  const sunrise = sunTimes.sunrise;
+  const sunset = sunTimes.sunset;
 
   const current: CurrentWeather = {
     time: first.time,

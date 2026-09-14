@@ -1,6 +1,7 @@
 import { WeatherProvider } from './weather-provider.interface';
 import { WeatherData, LocationInfo, WeatherProviderOptions, CurrentWeather, HourlyForecastItem, DailyForecastItem, WeatherIconCode } from '../types/weather';
 import { calculateFeelsLike, generateRealWeatherSummary } from '../normalizers/met-norway.normalizer';
+import { calculateSunriseSunset } from '../utils';
 
 export class WeatherApiProvider implements WeatherProvider {
   public readonly name = 'weatherapi';
@@ -84,8 +85,8 @@ export class WeatherApiProvider implements WeatherProvider {
         precipitation: currentRaw.precip_mm,
         cloudCover: currentRaw.cloud,
         uvIndex: currentRaw.uv,
-        sunrise: todayAstro?.sunrise ? `${todayDateStr}T${todayAstro.sunrise}` : `${todayDateStr}T06:00:00Z`,
-        sunset: todayAstro?.sunset ? `${todayDateStr}T${todayAstro.sunset}` : `${todayDateStr}T18:30:00Z`,
+        sunrise: todayAstro?.sunrise || calculateSunriseSunset(lat, lon, new Date()).sunrise,
+        sunset: todayAstro?.sunset || calculateSunriseSunset(lat, lon, new Date()).sunset,
         visibility: currentRaw.vis_km,
         isDay,
       };

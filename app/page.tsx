@@ -18,30 +18,33 @@ import {
 import { SnowDayCalculatorView } from '@/components/snow-day/SnowDayCalculatorView';
 import { weatherService } from '@/lib/weather/service';
 import { SnowDayPredictionEngine } from '@/lib/snow-day/engine';
-import { POPULAR_CITIES } from '@/lib/location/cities';
+import { POPULAR_CITIES, SNOW_BELT_CITIES } from '@/lib/location/cities';
 import { LocationInfo } from '@/lib/weather/types/weather';
 
 export const revalidate = 900; // 15 minutes ISR
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+
 export const metadata: Metadata = {
-  title: 'Snow Day Calculator — Free Snow Day Predictor & Probability',
+  title: 'Free Snow Day Calculator — Snow Day Predictor',
   description:
-    'Free Snow Day Calculator: Will tomorrow be a snow day? Enter your city or ZIP code to calculate your estimated snow day probability using snowfall, temperature, ice, and wind forecasts.',
+    'Calculate your snow day probability using snowfall, temperature, ice, wind and winter weather forecasts. Free Snow Day Calculator and Snow Day Predictor.',
   alternates: {
-    canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com',
+    canonical: siteUrl,
   },
   openGraph: {
-    title: 'Free Snow Day Calculator — Will Tomorrow Be a Snow Day?',
+    title: 'Free Snow Day Calculator — Snow Day Predictor',
     description:
-      'Calculate your estimated snow day probability based on real-time snowfall accumulation, morning commute temperatures, ice hazards, and winter storm wind gusts.',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com',
+      'Calculate your snow day probability using snowfall, temperature, ice, wind and winter weather forecasts. Free Snow Day Calculator and Snow Day Predictor.',
+    url: siteUrl,
     siteName: 'Snow Day Calculator Free',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free Snow Day Calculator — Will Tomorrow Be a Snow Day?',
-    description: 'Instant weather-based snow day probability calculator with detailed winter forecast breakdown.',
+    title: 'Free Snow Day Calculator — Snow Day Predictor',
+    description:
+      'Calculate your snow day probability using snowfall, temperature, ice, wind and winter weather forecasts. Free Snow Day Calculator and Snow Day Predictor.',
   },
 };
 
@@ -55,25 +58,6 @@ const DEFAULT_HOMEPAGE_LOCATION: LocationInfo = {
   timezone: 'America/New_York',
   slug: 'new-york',
 };
-
-const TOP_WINTER_CITIES = [
-  { name: 'New York', region: 'NY', country: 'US', slug: 'new-york' },
-  { name: 'Chicago', region: 'IL', country: 'US', slug: 'chicago' },
-  { name: 'Boston', region: 'MA', country: 'US', slug: 'boston' },
-  { name: 'Denver', region: 'CO', country: 'US', slug: 'denver' },
-  { name: 'Minneapolis', region: 'MN', country: 'US', slug: 'minneapolis' },
-  { name: 'Buffalo', region: 'NY', country: 'US', slug: 'buffalo' },
-  { name: 'Detroit', region: 'MI', country: 'US', slug: 'detroit' },
-  { name: 'Pittsburgh', region: 'PA', country: 'US', slug: 'pittsburgh' },
-  { name: 'Toronto', region: 'ON', country: 'CA', slug: 'toronto' },
-  { name: 'Montreal', region: 'QC', country: 'CA', slug: 'montreal' },
-  { name: 'Calgary', region: 'AB', country: 'CA', slug: 'calgary' },
-  { name: 'London', region: 'England', country: 'GB', slug: 'london' },
-  { name: 'Oslo', region: 'Oslo', country: 'NO', slug: 'oslo' },
-  { name: 'Helsinki', region: 'Uusimaa', country: 'FI', slug: 'helsinki' },
-  { name: 'Stockholm', region: 'Stockholm', country: 'SE', slug: 'stockholm' },
-  { name: 'Tokyo', region: 'Kanto', country: 'JP', slug: 'tokyo' },
-];
 
 export default async function HomePage() {
   let initialPrediction = null;
@@ -92,12 +76,12 @@ export default async function HomePage() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Snow Day Calculator Free',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com',
+    url: siteUrl,
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/snow-day-calculator/{search_term_string}`,
+        urlTemplate: `${siteUrl}/snow-day-calculator/{search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
@@ -111,8 +95,27 @@ export default async function HomePage() {
     applicationCategory: 'WeatherApplication',
     description:
       'Instant snow day prediction and school closure probability calculator powered by real-time meteorological models.',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com',
+    url: siteUrl,
+    isAccessibleForFree: true,
+    offers: {
+      '@type': 'Offer',
+      price: '0.00',
+      priceCurrency: 'USD',
+    },
   };
+
+  // Group cities by regions
+  const northeast = SNOW_BELT_CITIES.filter((c) =>
+    ['New York', 'Massachusetts', 'Connecticut', 'Rhode Island', 'Pennsylvania', 'New Jersey', 'Maryland', 'District of Columbia'].includes(c.region || '')
+  );
+  const midwest = SNOW_BELT_CITIES.filter((c) =>
+    ['Illinois', 'Michigan', 'Minnesota', 'Ohio', 'Wisconsin', 'Indiana', 'Missouri', 'Nebraska', 'Iowa', 'North Dakota', 'South Dakota'].includes(c.region || '')
+  );
+  const mountainWest = SNOW_BELT_CITIES.filter((c) =>
+    ['Colorado', 'Utah', 'Idaho', 'Washington', 'Oregon', 'Alaska'].includes(c.region || '')
+  );
+  const canada = SNOW_BELT_CITIES.filter((c) => c.countryCode === 'CA');
+  const europeIntl = SNOW_BELT_CITIES.filter((c) => !['US', 'CA'].includes(c.countryCode || ''));
 
   return (
     <div style={{ paddingBottom: '4rem' }}>
@@ -205,44 +208,116 @@ export default async function HomePage() {
         />
       </section>
 
-      {/* 3. Snow Day Calculator by City Directory */}
+      {/* 3. Snow Day Calculator by City Directory (Categorized by Region) */}
       <section className="container" style={{ marginTop: '4.5rem' }}>
-        <div style={{ marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <CloudSnow size={22} style={{ color: 'var(--accent-primary)' }} /> Snow Day Calculator by City
+        <div style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <CloudSnow size={24} style={{ color: 'var(--accent-primary)' }} /> Snow Day Calculator by Region
           </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-            Quick access to localized snow day probabilities and winter weather risk reports for major metropolitan districts
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+            Instant localized snow day probability reports and school cancellation predictors across major metropolitan districts
           </p>
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-            gap: '0.85rem',
-          }}
-        >
-          {TOP_WINTER_CITIES.map((c) => (
-            <Link
-              key={c.slug}
-              href={`/snow-day-calculator/${c.slug}`}
-              className="glass-card"
-              style={{
-                padding: '0.85rem 1rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{c.name}</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{c.region}, {c.country}</div>
-              </div>
-              <Snowflake size={14} style={{ color: 'var(--accent-primary)' }} />
-            </Link>
-          ))}
-        </div>
+        {/* Northeast */}
+        {northeast.length > 0 && (
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--accent-primary)' }}>
+              US Northeast & Mid-Atlantic
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+              {northeast.map((city) => (
+                <Link key={city.slug} href={`/snow-day-calculator/${city.slug}`} className="glass-card" style={{ padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{city.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{city.region}</div>
+                  </div>
+                  <Snowflake size={14} style={{ color: 'var(--accent-primary)' }} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Midwest */}
+        {midwest.length > 0 && (
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--accent-primary)' }}>
+              US Midwest & Great Lakes
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+              {midwest.map((city) => (
+                <Link key={city.slug} href={`/snow-day-calculator/${city.slug}`} className="glass-card" style={{ padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{city.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{city.region}</div>
+                  </div>
+                  <Snowflake size={14} style={{ color: 'var(--accent-primary)' }} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Mountain West */}
+        {mountainWest.length > 0 && (
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--accent-primary)' }}>
+              US Mountain West & Northwest
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+              {mountainWest.map((city) => (
+                <Link key={city.slug} href={`/snow-day-calculator/${city.slug}`} className="glass-card" style={{ padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{city.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{city.region}</div>
+                  </div>
+                  <Snowflake size={14} style={{ color: 'var(--accent-primary)' }} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Canada */}
+        {canada.length > 0 && (
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--accent-primary)' }}>
+              Canada
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+              {canada.map((city) => (
+                <Link key={city.slug} href={`/snow-day-calculator/${city.slug}`} className="glass-card" style={{ padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{city.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{city.region}, CA</div>
+                  </div>
+                  <Snowflake size={14} style={{ color: 'var(--accent-primary)' }} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* International */}
+        {europeIntl.length > 0 && (
+          <div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--accent-primary)' }}>
+              UK, Europe & International
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+              {europeIntl.map((city) => (
+                <Link key={city.slug} href={`/snow-day-calculator/${city.slug}`} className="glass-card" style={{ padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{city.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{city.country}</div>
+                  </div>
+                  <Snowflake size={14} style={{ color: 'var(--accent-primary)' }} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* 4. Secondary Supporting Weather Tools */}

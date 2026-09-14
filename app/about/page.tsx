@@ -2,10 +2,15 @@ import React from 'react';
 import { Metadata } from 'next';
 import { Snowflake, ShieldCheck, Zap, Globe2, Layers, Heart, Compass } from 'lucide-react';
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+
 export const metadata: Metadata = {
   title: 'About Snow Day Calculator Free — Mission & Architecture',
   description:
     'Learn about Snow Day Calculator Free, our deterministic winter weather prediction engine, and how we normalize open meteorological models.',
+  alternates: {
+    canonical: `${siteUrl}/about`,
+  },
 };
 
 export default function AboutPage() {

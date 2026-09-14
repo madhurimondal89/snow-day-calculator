@@ -1,6 +1,7 @@
 import { WeatherProvider } from './weather-provider.interface';
 import { WeatherData, LocationInfo, WeatherProviderOptions, CurrentWeather, HourlyForecastItem, DailyForecastItem, WeatherIconCode } from '../types/weather';
 import { calculateFeelsLike, generateRealWeatherSummary } from '../normalizers/met-norway.normalizer';
+import { calculateSunriseSunset } from '../utils';
 
 export class NoaaProvider implements WeatherProvider {
   public readonly name = 'noaa';
@@ -148,8 +149,8 @@ export class NoaaProvider implements WeatherProvider {
         precipitation: curPeriod.probabilityOfPrecipitation?.value ? curPeriod.probabilityOfPrecipitation.value / 10 : 0,
         cloudCover: condition.toLowerCase().includes('cloud') ? 60 : 15,
         uvIndex: 5,
-        sunrise: `${todayDateStr}T06:00:00Z`,
-        sunset: `${todayDateStr}T18:30:00Z`,
+        sunrise: calculateSunriseSunset(lat, lon, new Date()).sunrise,
+        sunset: calculateSunriseSunset(lat, lon, new Date()).sunset,
         isDay,
       };
 

@@ -8,6 +8,7 @@ import {
   Layers,
   Thermometer,
   CloudRain,
+  Snowflake,
   Wind,
   Cloud,
   Activity,
@@ -20,11 +21,11 @@ import {
   Map as MapIcon,
 } from 'lucide-react';
 import { POPULAR_CITIES } from '@/lib/location/cities';
-import { formatTemperature } from '@/lib/weather/utils';
+import { formatTemperature, formatWindSpeed, getWindDirectionLabel, getUvCategory } from '@/lib/weather/utils';
 import { LocationInfo } from '@/lib/weather/types/weather';
 import { useWeatherPreferences } from '../providers/WeatherPreferencesContext';
 
-export type WeatherMapLayer = 'precipitation' | 'temperature' | 'wind' | 'clouds' | 'aqi';
+export type WeatherMapLayer = 'snow' | 'precipitation' | 'temperature' | 'wind' | 'clouds' | 'aqi';
 export type MapTileStyle = 'dark' | 'light' | 'streets';
 
 interface WeatherMapProps {
@@ -36,96 +37,37 @@ interface WeatherMapProps {
   interactive?: boolean;
 }
 
-// Built-in standalone style specifications with 100% global reliability & ZERO watermarks
-const getMapStyleSpec = (styleType: MapTileStyle): maplibregl.StyleSpecification => {
+// OpenFreeMap vector style specifications (100% free, zero watermarks, no API keys required)
+const getMapStyleUrl = (styleType: MapTileStyle): string => {
   if (styleType === 'dark') {
-    return {
-      version: 8,
-      sources: {
-        'esri-dark-base': {
-          type: 'raster',
-          tiles: [
-            'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-          ],
-          tileSize: 256,
-          attribution: '© <a href="https://www.esri.com/">Esri</a>, HERE, Garmin, © OpenStreetMap contributors',
-        },
-        'esri-dark-labels': {
-          type: 'raster',
-          tiles: [
-            'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
-          ],
-          tileSize: 256,
-        },
-      },
-      layers: [
-        {
-          id: 'esri-dark-base-layer',
-          type: 'raster',
-          source: 'esri-dark-base',
-          minzoom: 0,
-          maxzoom: 20,
-        },
-        {
-          id: 'esri-dark-labels-layer',
-          type: 'raster',
-          source: 'esri-dark-labels',
-          minzoom: 0,
-          maxzoom: 20,
-        },
-      ],
-    };
+    return 'https://tiles.openfreemap.org/styles/dark';
   }
-
   if (styleType === 'streets') {
-    return {
-      version: 8,
-      sources: {
-        'osm-tiles': {
-          type: 'raster',
-          tiles: [
-            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          ],
-          tileSize: 256,
-          attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        },
-      },
-      layers: [
-        {
-          id: 'osm-layer',
-          type: 'raster',
-          source: 'osm-tiles',
-          minzoom: 0,
-          maxzoom: 19,
-        },
-      ],
-    };
+    return 'https://tiles.openfreemap.org/styles/liberty';
   }
-
-  // Default: OpenStreetMap clean light
-  return {
-    version: 8,
-    sources: {
-      'osm-light-tiles': {
-        type: 'raster',
-        tiles: [
-          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        ],
-        tileSize: 256,
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      },
-    },
-    layers: [
-      {
-        id: 'osm-light-layer',
-        type: 'raster',
-        source: 'osm-light-tiles',
-        minzoom: 0,
-        maxzoom: 19,
-      },
-    ],
-  };
+  return 'https://tiles.openfreemap.org/styles/positron';
 };
+
+interface ClickedLocationData {
+  lat: number;
+  lon: number;
+  name?: string;
+  temp?: number;
+  feelsLike?: number;
+  condition?: string;
+  iconCode?: string;
+  precipitation?: number;
+  snowfall?: number;
+  pop?: number;
+  windSpeed?: number;
+  windDirection?: number;
+  windGust?: number;
+  cloudCover?: number;
+  humidity?: number;
+  uvIndex?: number;
+  pressure?: number;
+  loading: boolean;
+}
 
 export const WeatherMap: React.FC<WeatherMapProps> = ({
   initialLat = 22.5726,
@@ -145,13 +87,7 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
   const [tileStyle, setTileStyle] = useState<MapTileStyle>(theme === 'dark' ? 'dark' : 'light');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [clickedLocation, setClickedLocation] = useState<{
-    lat: number;
-    lon: number;
-    temp?: number;
-    condition?: string;
-    loading: boolean;
-  } | null>(null);
+  const [clickedLocation, setClickedLocation] = useState<ClickedLocationData | null>(null);
 
   const [mapSearchQuery, setMapSearchQuery] = useState('');
   const [mapSearchResults, setMapSearchResults] = useState<LocationInfo[]>([]);
@@ -237,7 +173,7 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: getMapStyleSpec(tileStyle),
+      style: getMapStyleUrl(tileStyle),
       center: [initialLon, initialLat],
       zoom: initialZoom,
       attributionControl: false,
@@ -247,7 +183,7 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
     map.addControl(
       new maplibregl.AttributionControl({
         compact: true,
-        customAttribution: '© Weather Hub, © CARTO, © OpenStreetMap contributors',
+        customAttribution: '© OpenFreeMap, © OpenStreetMap contributors',
       }),
       'bottom-right'
     );
@@ -291,11 +227,25 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
           const res = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
           if (res.ok) {
             const data = await res.json();
+            const cur = data.current || {};
+            const d0 = data.daily?.[0] || {};
             setClickedLocation({
               lat,
               lon,
-              temp: data.current?.temp,
-              condition: data.current?.condition || 'Clear',
+              name: data.location?.name,
+              temp: cur.temp,
+              feelsLike: cur.feelsLike,
+              condition: cur.condition || 'Clear',
+              iconCode: cur.iconCode,
+              precipitation: cur.precipitation ?? d0.precip ?? 0,
+              pop: d0.pop ?? (cur.precipitation > 0 ? 80 : 0),
+              windSpeed: cur.windSpeed,
+              windDirection: cur.windDirection,
+              windGust: cur.windGust,
+              cloudCover: cur.cloudCover,
+              humidity: cur.humidity,
+              uvIndex: cur.uvIndex,
+              pressure: cur.pressure,
               loading: false,
             });
           } else {
@@ -327,7 +277,7 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
   // Update style dynamically when tileStyle changes
   useEffect(() => {
     if (mapInstanceRef.current) {
-      mapInstanceRef.current.setStyle(getMapStyleSpec(tileStyle));
+      mapInstanceRef.current.setStyle(getMapStyleUrl(tileStyle));
     }
   }, [tileStyle]);
 
@@ -542,6 +492,29 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
       >
         <button
           type="button"
+          onClick={() => setActiveLayer('snow')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+            padding: '0.45rem 0.75rem',
+            borderRadius: 'var(--radius-full)',
+            background: activeLayer === 'snow' ? 'linear-gradient(135deg, #38bdf8 0%, #2563eb 100%)' : 'rgba(15, 23, 42, 0.85)',
+            border: activeLayer === 'snow' ? '1px solid #38bdf8' : '1px solid rgba(255,255,255,0.15)',
+            color: '#ffffff',
+            fontSize: '0.75rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            backdropFilter: 'blur(8px)',
+            boxShadow: activeLayer === 'snow' ? '0 0 12px rgba(56, 189, 248, 0.4)' : 'none',
+          }}
+        >
+          <Snowflake size={13} />
+          <span>Snow</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveLayer('precipitation')}
           style={{
             display: 'flex',
@@ -734,17 +707,27 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
             position: 'absolute',
             top: '1rem',
             right: '1rem',
-            background: 'rgba(15, 23, 42, 0.95)',
-            padding: '0.85rem 1rem',
+            background: 'rgba(15, 23, 42, 0.96)',
+            padding: '1rem',
             borderRadius: 'var(--radius-md)',
             zIndex: 20,
-            maxWidth: '240px',
+            width: '270px',
             border: '1px solid rgba(56, 189, 248, 0.4)',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+            boxShadow: '0 12px 30px rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(12px)',
           }}
         >
+          {/* Header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#38bdf8' }}>Point Weather</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', fontWeight: 700, color: activeLayer === 'snow' ? '#38bdf8' : activeLayer === 'temperature' ? '#f59e0b' : activeLayer === 'wind' ? '#06b6d4' : activeLayer === 'clouds' ? '#94a3b8' : activeLayer === 'aqi' ? '#10b981' : '#38bdf8' }}>
+              {activeLayer === 'snow' && <Snowflake size={15} />}
+              {activeLayer === 'precipitation' && <CloudRain size={15} />}
+              {activeLayer === 'temperature' && <Thermometer size={15} />}
+              {activeLayer === 'wind' && <Wind size={15} />}
+              {activeLayer === 'clouds' && <Cloud size={15} />}
+              {activeLayer === 'aqi' && <Activity size={15} />}
+              <span style={{ textTransform: 'capitalize' }}>{activeLayer} Data</span>
+            </div>
             <button
               type="button"
               onClick={() => setClickedLocation(null)}
@@ -754,36 +737,171 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
             </button>
           </div>
 
-          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-            {clickedLocation.lat.toFixed(2)}°N, {clickedLocation.lon.toFixed(2)}°E
+          <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginBottom: '0.5rem' }}>
+            {clickedLocation.name ? `${clickedLocation.name} • ` : ''}{clickedLocation.lat.toFixed(2)}°N, {clickedLocation.lon.toFixed(2)}°E
           </div>
 
           {clickedLocation.loading ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem', fontSize: '0.8rem', color: '#ffffff' }}>
-              <Loader2 size={14} className="animate-spin" color="#38bdf8" /> Loading data...
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 0', fontSize: '0.8rem', color: '#ffffff' }}>
+              <Loader2 size={16} className="animate-spin" color="#38bdf8" /> Fetching live metrics...
             </div>
           ) : clickedLocation.temp !== undefined ? (
-            <div style={{ marginTop: '0.5rem' }}>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff' }}>
-                {formatTemperature(clickedLocation.temp, unit)}
+            <div>
+              {/* Active Layer Highlight Card */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '0.65rem 0.75rem',
+                  marginBottom: '0.65rem',
+                }}
+              >
+                {activeLayer === 'snow' && (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#38bdf8' }}>
+                        {clickedLocation.temp !== undefined && clickedLocation.temp <= 2 && clickedLocation.precipitation
+                          ? `${(clickedLocation.precipitation * 1.0).toFixed(1)} cm`
+                          : '0.0 cm'}
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>est. snowfall</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.2rem' }}>
+                      Snow Hazard: <strong>{clickedLocation.temp !== undefined && clickedLocation.temp <= 0 ? (clickedLocation.pop && clickedLocation.pop > 40 ? 'High (Accumulating Snow)' : 'Moderate (Sub-Zero Temp)') : clickedLocation.temp !== undefined && clickedLocation.temp <= 3 ? 'Low (Near Freezing / Slush)' : 'Zero (Too Warm for Snow)'}</strong>
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.1rem' }}>
+                      Temp: {formatTemperature(clickedLocation.temp, unit)} • Precip: {clickedLocation.precipitation ?? 0} mm
+                    </div>
+                  </div>
+                )}
+
+                {activeLayer === 'precipitation' && (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#38bdf8' }}>
+                        {clickedLocation.precipitation ?? 0} mm
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>precip</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.2rem' }}>
+                      Rain Probability: <strong>{clickedLocation.pop ?? 0}%</strong>
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.1rem' }}>
+                      Status: {clickedLocation.precipitation && clickedLocation.precipitation > 0 ? '🌧️ Active Rainfall' : '☀️ Dry Conditions'}
+                    </div>
+                  </div>
+                )}
+
+                {activeLayer === 'temperature' && (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f59e0b' }}>
+                        {formatTemperature(clickedLocation.temp, unit)}
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>temp</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.2rem' }}>
+                      Feels Like: <strong>{formatTemperature(clickedLocation.feelsLike ?? clickedLocation.temp, unit)}</strong>
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.1rem' }}>
+                      Condition: {clickedLocation.condition}
+                    </div>
+                  </div>
+                )}
+
+                {activeLayer === 'wind' && (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#06b6d4' }}>
+                        {formatWindSpeed(clickedLocation.windSpeed ?? 0, 'kmh')}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.2rem' }}>
+                      Direction: <strong>{getWindDirectionLabel(clickedLocation.windDirection ?? 0)} ({Math.round(clickedLocation.windDirection ?? 0)}°)</strong>
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.1rem' }}>
+                      Gusts: {clickedLocation.windGust ? formatWindSpeed(clickedLocation.windGust, 'kmh') : 'Light Breeze'}
+                    </div>
+                  </div>
+                )}
+
+                {activeLayer === 'clouds' && (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#cbd5e1' }}>
+                        {clickedLocation.cloudCover ?? 0}%
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>coverage</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.2rem' }}>
+                      Sky: <strong>{clickedLocation.condition}</strong>
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.1rem' }}>
+                      Humidity: {clickedLocation.humidity ?? 0}%
+                    </div>
+                  </div>
+                )}
+
+                {activeLayer === 'aqi' && (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#10b981' }}>
+                        UV {clickedLocation.uvIndex ?? 0}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.2rem' }}>
+                      Risk: <strong>{getUvCategory(clickedLocation.uvIndex ?? 0).label} Exposure</strong>
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.1rem' }}>
+                      Pressure: {clickedLocation.pressure ?? 1013} hPa
+                    </div>
+                  </div>
+                )}
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
-                {clickedLocation.condition}
+
+              {/* 4-Metric Summary Grid */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: '0.4rem',
+                  fontSize: '0.72rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.65rem',
+                }}
+              >
+                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.35rem 0.5rem', borderRadius: '4px' }}>
+                  🌡️ Temp: <strong style={{ color: '#fff' }}>{formatTemperature(clickedLocation.temp, unit)}</strong>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.35rem 0.5rem', borderRadius: '4px' }}>
+                  💧 Precip: <strong style={{ color: '#fff' }}>{clickedLocation.precipitation ?? 0}mm</strong>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.35rem 0.5rem', borderRadius: '4px' }}>
+                  💨 Wind: <strong style={{ color: '#fff' }}>{formatWindSpeed(clickedLocation.windSpeed ?? 0, 'kmh')}</strong>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.35rem 0.5rem', borderRadius: '4px' }}>
+                  ☁️ Cloud: <strong style={{ color: '#fff' }}>{clickedLocation.cloudCover ?? 0}%</strong>
+                </div>
               </div>
+
+              {/* Action Button */}
               <button
                 type="button"
                 onClick={() => {
                   router.push(`/weather/${clickedLocation.lat.toFixed(2)},${clickedLocation.lon.toFixed(2)}`);
                 }}
                 style={{
-                  background: 'none',
+                  width: '100%',
+                  padding: '0.45rem',
+                  background: 'var(--accent-gradient)',
                   border: 'none',
-                  padding: 0,
-                  marginTop: '0.5rem',
+                  borderRadius: 'var(--radius-sm)',
                   fontSize: '0.75rem',
-                  color: '#38bdf8',
-                  textDecoration: 'underline',
+                  fontWeight: 600,
+                  color: '#ffffff',
                   cursor: 'pointer',
+                  textAlign: 'center',
                 }}
               >
                 View Full Forecast →
@@ -796,6 +914,79 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
           )}
         </div>
       )}
+
+      {/* Layer Legend (Positioned neatly above layer pills) */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '4.25rem',
+          left: '1rem',
+          zIndex: 10,
+          background: 'rgba(15, 23, 42, 0.92)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          borderRadius: 'var(--radius-md)',
+          padding: '0.4rem 0.8rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.6rem',
+          fontSize: '0.72rem',
+          color: '#cbd5e1',
+          boxShadow: '0 6px 16px rgba(0,0,0,0.4)',
+          pointerEvents: 'none',
+        }}
+      >
+        <span style={{ fontWeight: 700, color: '#38bdf8', textTransform: 'capitalize' }}>
+          {activeLayer} Scale:
+        </span>
+        {activeLayer === 'snow' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#94a3b8' }} /> 0 cm (None)
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#67e8f9' }} /> 1-5 cm (Dusting)
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#38bdf8' }} /> 5-15 cm (Moderate)
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#c084fc' }} /> 15+ cm (Blizzard)
+          </div>
+        )}
+        {activeLayer === 'precipitation' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#94a3b8' }} /> No Rain
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#38bdf8' }} /> Light (1-5mm)
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2563eb' }} /> Heavy (10mm+)
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#c084fc' }} /> Snow
+          </div>
+        )}
+        {activeLayer === 'temperature' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#38bdf8' }} /> &lt;0°C Freezing
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} /> 15-25°C Mild
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }} /> 26-35°C Warm
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444' }} /> 35°C+ Hot
+          </div>
+        )}
+        {activeLayer === 'wind' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} /> &lt;15 km/h Calm
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#06b6d4' }} /> 15-30 km/h Breeze
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }} /> 30-50 km/h Strong
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444' }} /> 50+ km/h Gale
+          </div>
+        )}
+        {activeLayer === 'clouds' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }} /> 0-20% Clear
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#94a3b8' }} /> 20-70% Partly
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#475569' }} /> 70-100% Overcast
+          </div>
+        )}
+        {activeLayer === 'aqi' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} /> 0-2 Low
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }} /> 3-5 Moderate
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f97316' }} /> 6-7 High
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8b5cf6' }} /> 8+ Extreme
+          </div>
+        )}
+      </div>
     </div>
   );
 };

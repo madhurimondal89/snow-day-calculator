@@ -10,12 +10,27 @@ import { WeatherIcon } from '@/components/weather/WeatherIcon';
 
 export const revalidate = 900;
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+
 export const metadata: Metadata = {
-  title: 'Global Weather Forecasts & City Weather Directory | Snow Day Calculator Free',
+  title: 'Weather Forecast — Current & Hourly Weather',
   description:
-    'Comprehensive 7-day weather forecasts, 24-hour hourly temperatures, air quality index, and radar maps for major global metropolitan cities.',
+    'Accurate global weather forecasts, 7-day extended projections, hourly temperatures, precipitation probabilities, and air quality analytics.',
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/weather`,
+    canonical: `${siteUrl}/weather`,
+  },
+  openGraph: {
+    title: 'Weather Forecast — Current & Hourly Weather',
+    description:
+      'Accurate global weather forecasts, 7-day extended projections, hourly temperatures, precipitation probabilities, and air quality analytics.',
+    url: `${siteUrl}/weather`,
+    siteName: 'Snow Day Calculator Free',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Weather Forecast — Current & Hourly Weather',
+    description: 'Accurate global weather forecasts and hourly trends.',
   },
 };
 

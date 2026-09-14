@@ -49,10 +49,8 @@ export const WeatherPreferencesProvider: React.FC<{ children: React.ReactNode }>
         setThemeState(savedTheme);
         document.documentElement.setAttribute('data-theme', savedTheme);
       } else {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initialTheme = prefersDark ? 'dark' : 'light';
-        setThemeState(initialTheme);
-        document.documentElement.setAttribute('data-theme', initialTheme);
+        setThemeState('dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
       }
 
       const savedFavs = localStorage.getItem(FAVORITES_STORAGE_KEY);

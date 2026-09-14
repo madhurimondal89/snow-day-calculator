@@ -2,9 +2,14 @@ import React from 'react';
 import { Metadata } from 'next';
 import { Mail, MessageSquare, Globe, Heart } from 'lucide-react';
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+
 export const metadata: Metadata = {
-  title: 'Contact & Inquiries | Weather Hub',
-  description: 'Get in touch with the Weather Hub maintainers and open-source contributors.',
+  title: 'Contact & Inquiries | Snow Day Calculator Free',
+  description: 'Get in touch with the Snow Day Calculator Free maintainers and meteorological contributors.',
+  alternates: {
+    canonical: `${siteUrl}/contact`,
+  },
 };
 
 export default function ContactPage() {

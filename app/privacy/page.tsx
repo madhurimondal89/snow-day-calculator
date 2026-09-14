@@ -2,9 +2,14 @@ import React from 'react';
 import { Metadata } from 'next';
 import { ShieldCheck } from 'lucide-react';
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Weather Hub',
-  description: 'Weather Hub privacy-first policy: zero tracking databases, client-side localStorage preferences.',
+  title: 'Privacy Policy | Snow Day Calculator Free',
+  description: 'Snow Day Calculator Free privacy-first policy: zero tracking databases, privacy-preserving location requests, and client-side preferences.',
+  alternates: {
+    canonical: `${siteUrl}/privacy`,
+  },
 };
 
 export default function PrivacyPage() {

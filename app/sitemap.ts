@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next';
-import { POPULAR_CITIES } from '@/lib/location/cities';
+import { POPULAR_CITIES, SNOW_BELT_CITIES } from '@/lib/location/cities';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
   const now = new Date();
 
   // Core static pages (Snow Day First)
@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${baseUrl}/`,
       lastModified: now,
-      changeFrequency: 'always',
+      changeFrequency: 'hourly',
       priority: 1.0,
     },
     {
@@ -23,10 +23,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/snow-day-predictor`,
       lastModified: now,
       changeFrequency: 'hourly',
-      priority: 0.9,
+      priority: 0.95,
     },
     {
       url: `${baseUrl}/snow-forecast`,
+      lastModified: now,
+      changeFrequency: 'hourly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/weather-map`,
       lastModified: now,
       changeFrequency: 'hourly',
       priority: 0.85,
@@ -41,7 +47,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/weather`,
       lastModified: now,
       changeFrequency: 'hourly',
-      priority: 0.75,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/tools`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/about`,
@@ -75,19 +87,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // High-value programmatic city snow day calculator pages
-  const snowDayCities = [
-    'new-york', 'chicago', 'boston', 'denver', 'toronto', 'montreal',
-    'minneapolis', 'london', 'buffalo', 'oslo', 'helsinki', 'stockholm',
-    'tokyo', 'seattle', 'detroit', 'philadelphia', 'pittsburgh', 'cleveland',
-    'calgary', 'vancouver'
-  ];
-
-  const snowDayRoutes: MetadataRoute.Sitemap = snowDayCities.map((slug) => ({
-    url: `${baseUrl}/snow-day-calculator/${slug}`,
+  // Programmatic snow day calculator pages for all snow regions
+  const snowDayRoutes: MetadataRoute.Sitemap = SNOW_BELT_CITIES.map((city) => ({
+    url: `${baseUrl}/snow-day-calculator/${city.slug}`,
     lastModified: now,
     changeFrequency: 'hourly',
-    priority: 0.85,
+    priority: city.popular ? 0.9 : 0.8,
   }));
 
   // General city weather pages
@@ -100,3 +105,4 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...staticRoutes, ...snowDayRoutes, ...cityRoutes];
 }
+

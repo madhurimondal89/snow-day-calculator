@@ -64,8 +64,9 @@ export async function resolveLocationFromSlug(slug: string): Promise<LocationInf
 }
 
 export function getLocationCanonicalUrl(slug: string, siteUrl?: string): string {
-  const base = siteUrl || process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com';
+  const base = siteUrl || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com';
   const cleanBase = base.replace(/\/+$/, '');
   const cleanSlug = encodeURIComponent(slug.trim());
   return `${cleanBase}/weather/${cleanSlug}`;
 }
+

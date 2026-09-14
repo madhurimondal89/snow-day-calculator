@@ -2,10 +2,15 @@ import React from 'react';
 import { Metadata } from 'next';
 import { Database, ExternalLink, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+
 export const metadata: Metadata = {
-  title: 'Data Sources & Meteorological Attribution | Weather Hub',
+  title: 'Data Sources & Meteorological Attribution | Snow Day Calculator Free',
   description:
-    'Complete transparency and official attribution for MET Norway, Open-Meteo, OpenFreeMap, and OpenStreetMap data providers.',
+    'Complete transparency and official attribution for MET Norway, NOAA NWS, MSC Environment Canada, Open-Meteo, FMI, and OpenStreetMap data providers.',
+  alternates: {
+    canonical: `${siteUrl}/data-sources`,
+  },
 };
 
 export default function DataSourcesPage() {
@@ -20,7 +25,7 @@ export default function DataSourcesPage() {
           Data Sources & Attribution
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginTop: '0.5rem', lineHeight: 1.6 }}>
-          Weather Hub is built entirely on authorized, open-access meteorological models and cartography. We proudly adhere to all provider attribution terms, caching regulations, and rate limitations.
+          Snow Day Calculator Free is built entirely on authorized, open-access meteorological models and cartography. We proudly adhere to all provider attribution terms, caching regulations, and rate limitations.
         </p>
       </div>
 

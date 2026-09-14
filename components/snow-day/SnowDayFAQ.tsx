@@ -21,10 +21,27 @@ const SNOW_DAY_FAQS = [
     a: 'Yes, significantly. Freezing rain coats roads, tree branches, and power lines in a layer of invisible, frictionless black ice. Even a fraction of a millimeter of freezing rain poses an immediate hazard to school buses, resulting in a high snow day probability even when zero snowfall is recorded.',
   },
   {
+    q: 'What is the difference between a 2-hour delay and a full snow day?',
+    a: 'A 2-hour delay allows municipal snowplow crews extra daylight time to salt and clear arterial roads after overnight snow, while giving school bus engines time to warm up. If heavy snow continues past 7:00 AM or freezing rain persists, districts typically upgrade a 2-hour delay into a full cancellation.',
+  },
+  {
+    q: 'At what time do school districts typically announce snow days?',
+    a: 'Superintendents usually communicate closure decisions between 5:00 AM and 6:30 AM on the day of the storm following 4:30 AM road scouting reports from local police and road departments. For massive blizzards with advance National Weather Service warnings, announcements may occur the night before by 9:00 PM – 10:00 PM.',
+  },
+  {
+    q: 'Does extreme cold or wind chill cause school closures without snow?',
+    a: 'Yes. Wind chill temperatures plunging below -20°F to -30°F (-29°C to -34°C) trigger district closures in many states due to the risk of frostbite within 10 to 15 minutes of exposure at school bus stops, as well as diesel bus fuel gelling.',
+  },
+  {
+    q: 'Can I calculate snow day chances by ZIP code or postal code?',
+    a: 'Yes! Simply enter any 5-digit US ZIP code, 6-character Canadian Postal Code, UK postcode, or city name in the search bar above to fetch localized hyper-accurate winter weather models.',
+  },
+  {
     q: 'Can I use the calculator outside the United States?',
     a: 'Yes. The Snow Day Calculator works globally across Canada, the UK, Europe, Asia, and worldwide wherever numeric weather forecasts are supported by our multi-provider routing network.',
   },
 ];
+
 
 export const SnowDayFAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);

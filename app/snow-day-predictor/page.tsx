@@ -1,28 +1,45 @@
 import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Snowflake, ChevronRight, Home, Sparkles, ShieldCheck } from 'lucide-react';
+import { Snowflake, ChevronRight, Home, Sparkles, CloudSnow } from 'lucide-react';
 import { SnowDayCalculatorView } from '@/components/snow-day/SnowDayCalculatorView';
 import { weatherService } from '@/lib/weather/service';
 import { SnowDayPredictionEngine } from '@/lib/snow-day/engine';
 import { LocationInfo } from '@/lib/weather/types/weather';
+import { SNOW_BELT_CITIES } from '@/lib/location/cities';
 
 export const revalidate = 900;
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+
 export const metadata: Metadata = {
-  title: 'Snow Day Predictor — Predict School Closures & Winter Cancellations',
+  title: 'Snow Day Predictor — Will Tomorrow Be a Snow Day?',
   description:
     'Use our Snow Day Predictor to calculate school cancellation risk using advanced winter meteorological models, overnight snow accumulation, and ice hazard detection.',
+  keywords: [
+    'snow day predictor',
+    'free snow day predictor',
+    'school closing predictor',
+    'school cancellation odds',
+    'snow day chance calculator',
+    'will school be cancelled tomorrow',
+    'winter weather predictor',
+  ],
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/snow-day-predictor`,
+    canonical: `${siteUrl}/snow-day-predictor`,
   },
   openGraph: {
-    title: 'Snow Day Predictor — Winter School Cancellation Estimate',
+    title: 'Snow Day Predictor — Will Tomorrow Be a Snow Day?',
     description:
-      'Predict your snow day probability using snowfall accumulation, morning commute temperatures, and road icing risks.',
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/snow-day-predictor`,
+      'Use our Snow Day Predictor to calculate school cancellation risk using advanced winter meteorological models, overnight snow accumulation, and ice hazard detection.',
+    url: `${siteUrl}/snow-day-predictor`,
     siteName: 'Snow Day Calculator Free',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Snow Day Predictor — Will Tomorrow Be a Snow Day?',
+    description: 'Calculate real-time school closing odds with our advanced meteorological engine.',
   },
 };
 
@@ -50,8 +67,51 @@ export default async function SnowDayPredictorPage() {
     console.error('[SnowDayPredictorPage] SSR error:', err);
   }
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Snow Day Predictor',
+        item: `${siteUrl}/snow-day-predictor`,
+      },
+    ],
+  };
+
+  const softwareSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Snow Day Predictor',
+    applicationCategory: 'WeatherApplication',
+    operatingSystem: 'All',
+    url: `${siteUrl}/snow-day-predictor`,
+    isAccessibleForFree: true,
+    offers: {
+      '@type': 'Offer',
+      price: '0.00',
+      priceCurrency: 'USD',
+    },
+  };
+
   return (
     <div className="container" style={{ padding: '2rem 1.25rem 4rem 1.25rem' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+      />
+
       {/* Breadcrumb Navigation */}
       <nav
         aria-label="Breadcrumb"
@@ -89,7 +149,7 @@ export default async function SnowDayPredictorPage() {
           }}
         >
           <Sparkles size={14} color="#f59e0b" />
-          <span>School Closure Risk Prediction</span>
+          <span>School Closure Risk Prediction Engine</span>
         </div>
 
         <h1
@@ -105,7 +165,7 @@ export default async function SnowDayPredictorPage() {
         </h1>
 
         <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.95rem, 1.8vw, 1.15rem)', lineHeight: 1.6 }}>
-          Analyze winter storm forecasts and commute timing to predict the probability that schools or offices may cancel schedules.
+          Analyze winter storm forecasts, overnight accumulation, and morning commute timing to predict the probability that schools or offices may cancel or delay schedules.
         </p>
       </div>
 
@@ -113,6 +173,47 @@ export default async function SnowDayPredictorPage() {
         initialLocation={DEFAULT_LOCATION}
         initialPrediction={initialPrediction}
       />
+
+      {/* Top Snow Cities Directory */}
+      <section style={{ marginTop: '4.5rem' }}>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <CloudSnow size={22} style={{ color: 'var(--accent-primary)' }} /> Popular Winter Prediction Cities
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+            Explore snow day predictions and winter closure risks for major metropolitan districts
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+            gap: '0.85rem',
+          }}
+        >
+          {SNOW_BELT_CITIES.slice(0, 24).map((c) => (
+            <Link
+              key={c.slug}
+              href={`/snow-day-calculator/${c.slug}`}
+              className="glass-card"
+              style={{
+                padding: '0.85rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{c.name}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{c.region || c.country}</div>
+              </div>
+              <Snowflake size={14} style={{ color: 'var(--accent-primary)' }} />
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
+

@@ -1,9 +1,14 @@
 import React from 'react';
 import { Metadata } from 'next';
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+
 export const metadata: Metadata = {
-  title: 'Terms of Service | Weather Hub',
-  description: 'Terms of Service for using the Weather Hub platform.',
+  title: 'Terms of Service | Snow Day Calculator Free',
+  description: 'Terms of Service and non-binding meteorological disclaimer for Snow Day Calculator Free.',
+  alternates: {
+    canonical: `${siteUrl}/terms`,
+  },
 };
 
 export default function TermsPage() {
