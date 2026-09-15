@@ -31,6 +31,7 @@ import { SnowDayFAQ } from './SnowDayFAQ';
 import { SearchBar } from '../weather/SearchBar';
 import { DataSourceAttribution } from '../weather/DataSourceAttribution';
 import { useWeatherPreferences } from '../providers/WeatherPreferencesContext';
+import { AdSenseBanner } from '../ads/AdSenseBanner';
 
 interface SnowDayCalculatorViewProps {
   initialLocation?: LocationInfo;
@@ -364,6 +365,11 @@ export const SnowDayCalculatorView: React.FC<SnowDayCalculatorViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Non-intrusive Ad Placement: positioned cleanly after prediction results and before guides */}
+      <div style={{ margin: '2.5rem 0' }}>
+        <AdSenseBanner slot="7021668643" />
+      </div>
 
       {/* Educational Guide Section */}
       {showExtendedGuides && <EducationalWinterGuide />}

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import './globals.css';
 import { WeatherPreferencesProvider } from '@/components/providers/WeatherPreferencesContext';
 import { Header } from '@/components/layout/Header';
@@ -138,6 +139,12 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(globalWebApplicationSchema) }}
+        />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8732458645979427"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
         />
       </head>
       <body>

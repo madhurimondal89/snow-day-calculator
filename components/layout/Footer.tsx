@@ -1,6 +1,20 @@
 import React from 'react';
 import Link from 'next/link';
-import { Snowflake, ShieldCheck, Database, FileText, Mail, Info, Map, Compass, CloudSnow } from 'lucide-react';
+import {
+  Snowflake,
+  ShieldCheck,
+  Database,
+  FileText,
+  Mail,
+  Info,
+  Map,
+  Compass,
+  CloudSnow,
+  ExternalLink,
+  Calculator,
+  Activity,
+  Wrench,
+} from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -145,6 +159,123 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
             </ul>
+          </div>
+        </div>
+
+        {/* Free Calculator Network Bar */}
+        <div
+          style={{
+            borderTop: '1px solid var(--border-color)',
+            padding: '1.75rem 0',
+            marginBottom: '1.5rem',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1.25rem',
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  fontSize: '0.82rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  color: 'var(--text-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                }}
+              >
+                <Calculator size={15} style={{ color: 'var(--accent-primary)' }} />
+                <span>Our Free Calculator Network</span>
+              </div>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                Explore specialized precision calculators across finance, health, and engineering.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '0.75rem',
+              }}
+            >
+              <a
+                href="https://financialhub.calculatorfree.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass-card"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '0.5rem 0.9rem',
+                  borderRadius: 'var(--radius-md, 8px)',
+                  fontSize: '0.82rem',
+                  color: 'var(--text-primary)',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s ease',
+                  border: '1px solid var(--border-color)',
+                }}
+              >
+                <Calculator size={14} color="#38bdf8" />
+                <span style={{ fontWeight: 600 }}>Financial Hub</span>
+                <ExternalLink size={12} style={{ color: 'var(--text-muted)' }} />
+              </a>
+
+              <a
+                href="https://health-hub.calculatorfree.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass-card"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '0.5rem 0.9rem',
+                  borderRadius: 'var(--radius-md, 8px)',
+                  fontSize: '0.82rem',
+                  color: 'var(--text-primary)',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s ease',
+                  border: '1px solid var(--border-color)',
+                }}
+              >
+                <Activity size={14} color="#10b981" />
+                <span style={{ fontWeight: 600 }}>Health Hub</span>
+                <ExternalLink size={12} style={{ color: 'var(--text-muted)' }} />
+              </a>
+
+              <a
+                href="https://engineering.calculatorfree.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass-card"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '0.5rem 0.9rem',
+                  borderRadius: 'var(--radius-md, 8px)',
+                  fontSize: '0.82rem',
+                  color: 'var(--text-primary)',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s ease',
+                  border: '1px solid var(--border-color)',
+                }}
+              >
+                <Wrench size={14} color="#a855f7" />
+                <span style={{ fontWeight: 600 }}>Engineering Hub</span>
+                <ExternalLink size={12} style={{ color: 'var(--text-muted)' }} />
+              </a>
+            </div>
           </div>
         </div>
 

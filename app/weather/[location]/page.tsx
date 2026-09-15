@@ -14,6 +14,7 @@ import { AirQualityCard } from '@/components/weather/AirQualityCard';
 import { SunMoonCard } from '@/components/weather/SunMoonCard';
 import { LocationFAQ } from '@/components/weather/LocationFAQ';
 import { WeatherMapLazy } from '@/components/map/WeatherMapLazy';
+import { AdSenseBanner } from '@/components/ads/AdSenseBanner';
 import { POPULAR_CITIES } from '@/lib/location/cities';
 
 interface PageProps {
@@ -214,6 +215,9 @@ export default async function LocationWeatherPage({ params }: PageProps) {
           </div>
           <WeatherMapLazy initialLat={loc.lat} initialLon={loc.lon} initialZoom={7} height="420px" />
         </div>
+
+        {/* Non-intrusive Weather Ad Unit */}
+        <AdSenseBanner slot="7021668643" />
 
         {/* Location SEO FAQ */}
         <LocationFAQ data={weatherData} />
