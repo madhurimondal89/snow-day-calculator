@@ -75,6 +75,9 @@ export const metadata: Metadata = {
     apple: '/icon.svg',
   },
   manifest: '/manifest.json',
+  verification: {
+    google: 'google608401da6e5be338',
+  },
 };
 
 export const viewport: Viewport = {
