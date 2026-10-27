@@ -132,13 +132,13 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
   interactive = true,
 }) => {
   const router = useRouter();
-  const { unit, theme } = useWeatherPreferences();
+  const { unit } = useWeatherPreferences();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
 
   const [activeLayer, setActiveLayer] = useState<WeatherMapLayer>(defaultLayer);
-  const [tileStyle, setTileStyle] = useState<MapTileStyle>(theme === 'dark' ? 'dark' : 'light');
+  const [tileStyle, setTileStyle] = useState<MapTileStyle>('light');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [clickedLocation, setClickedLocation] = useState<ClickedLocationData | null>(null);
@@ -146,11 +146,6 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
   const [mapSearchQuery, setMapSearchQuery] = useState('');
   const [mapSearchResults, setMapSearchResults] = useState<LocationInfo[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
-  // Sync default style with theme switch
-  useEffect(() => {
-    setTileStyle(theme === 'dark' ? 'dark' : 'light');
-  }, [theme]);
 
   const renderWeatherMarkers = useCallback(
     (map: maplibregl.Map, layer: WeatherMapLayer) => {
@@ -733,7 +728,7 @@ export const WeatherMap: React.FC<WeatherMapProps> = ({
 
           <button
             type="button"
-            onClick={() => setTileStyle((prev) => (prev === 'dark' ? 'light' : prev === 'light' ? 'streets' : 'dark'))}
+            onClick={() => setTileStyle((prev) => (prev === 'light' ? 'streets' : prev === 'streets' ? 'dark' : 'light'))}
             title={`Current basemap: ${tileStyle}. Click to switch.`}
             style={{
               width: '36px',
