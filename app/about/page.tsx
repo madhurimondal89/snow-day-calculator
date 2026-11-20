@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import { Snowflake, ShieldCheck, Zap, Globe2, Layers, Heart, Compass } from 'lucide-react';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
 
 export const metadata: Metadata = {
   title: 'About Snow Day Calculator Free — Mission & Architecture',

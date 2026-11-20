@@ -6,7 +6,7 @@ export async function GET() {
   return NextResponse.json(
     {
       status: 'healthy',
-      service: 'Weather Hub',
+      service: 'Snow Day Calculator Free',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       version: '1.0.0',

@@ -10,18 +10,22 @@ import { LocationInfo } from '@/lib/weather/types/weather';
 export const revalidate = 900; // 15 minutes ISR
 
 export const metadata: Metadata = {
-  title: 'Snow Day Calculator — Snow Day Probability & Predictor | Weather Hub',
+  title: 'Snow Day Calculator — Snow Day Probability & Predictor | Snow Day Calculator Free',
   description:
     'Calculate your estimated snow day probability using snowfall, temperature, ice, wind and winter weather forecasts. Real-time deterministic meteorological analysis.',
+  robots: {
+    index: false,
+    follow: true,
+  },
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/tools/snow-day-calculator`,
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/snow-day-calculator`,
   },
   openGraph: {
-    title: 'Snow Day Calculator — Snow Day Probability & Predictor | Weather Hub',
+    title: 'Snow Day Calculator — Snow Day Probability & Predictor | Snow Day Calculator Free',
     description:
       'Calculate your estimated snow day probability using snowfall, temperature, ice, wind and winter weather forecasts.',
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/tools/snow-day-calculator`,
-    siteName: 'Weather Hub',
+    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/tools/snow-day-calculator`,
+    siteName: 'Snow Day Calculator Free',
     type: 'website',
   },
   twitter: {
@@ -64,7 +68,7 @@ export default async function SnowDayCalculatorPage() {
     applicationCategory: 'WeatherApplication',
     description:
       'Calculate the estimated probability of a school closure or snow day using real-time snowfall accumulation, temperature, ice hazard, and wind forecast data.',
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/tools/snow-day-calculator`,
+    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/tools/snow-day-calculator`,
   };
 
   const breadcrumbSchema = {
@@ -75,19 +79,19 @@ export default async function SnowDayCalculatorPage() {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com',
+        item: process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Tools',
-        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/tools`,
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/tools`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: 'Snow Day Calculator',
-        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/tools/snow-day-calculator`,
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/tools/snow-day-calculator`,
       },
     ],
   };

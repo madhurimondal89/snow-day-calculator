@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { POPULAR_CITIES, SNOW_BELT_CITIES } from '@/lib/location/cities';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
   const now = new Date();
 
   // Core static pages (Snow Day First)
@@ -48,12 +48,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'hourly',
       priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/tools`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
     },
     {
       url: `${baseUrl}/about`,
@@ -103,6 +97,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: city.popular ? 0.75 : 0.65,
   }));
 
-  return [...staticRoutes, ...snowDayRoutes, ...cityRoutes];
+  // Forecast pages for all cities
+  const forecastRoutes: MetadataRoute.Sitemap = POPULAR_CITIES.slice(0, 20).map((city) => ({
+    url: `${baseUrl}/forecast/${city.slug}`,
+    lastModified: now,
+    changeFrequency: 'hourly',
+    priority: city.popular ? 0.7 : 0.6,
+  }));
+
+  return [...staticRoutes, ...snowDayRoutes, ...cityRoutes, ...forecastRoutes];
 }
 

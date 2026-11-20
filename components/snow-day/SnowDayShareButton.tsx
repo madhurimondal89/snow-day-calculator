@@ -14,7 +14,7 @@ export const SnowDayShareButton: React.FC<SnowDayShareButtonProps> = ({ location
 
   const handleShare = async () => {
     const title = `Snow Day Calculator: ${probability}% chance for ${location.name}`;
-    const text = `Forecast probability of a snow day in ${location.name}: ${probability}%. Check the detailed breakdown on Weather Hub!`;
+    const text = `Forecast probability of a snow day in ${location.name}: ${probability}%. Check the detailed breakdown on Snow Day Calculator Free!`;
     const url = typeof window !== 'undefined' ? window.location.href : '';
 
     if (navigator.share) {

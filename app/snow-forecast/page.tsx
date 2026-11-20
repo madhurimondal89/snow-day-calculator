@@ -3,11 +3,12 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Snowflake, ChevronRight, Home, CloudSnow, MapPin, ArrowRight } from 'lucide-react';
 import { WeatherMapLazy } from '@/components/map/WeatherMapLazy';
+import { AdSenseBanner } from '@/components/ads/AdSenseBanner';
 import { POPULAR_CITIES } from '@/lib/location/cities';
 
 export const revalidate = 900;
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
 
 export const metadata: Metadata = {
   title: 'Snow Forecast — Snowfall & Winter Weather Forecast',
@@ -92,6 +93,11 @@ export default function SnowForecastPage() {
 
       {/* Interactive Map */}
       <WeatherMapLazy height="600px" defaultLayer="precipitation" />
+
+      {/* Ad Placement */}
+      <div style={{ margin: '2.5rem 0' }}>
+        <AdSenseBanner slot="7021668643" />
+      </div>
 
       {/* Snow Day Hubs Directory */}
       <div style={{ marginTop: '3.5rem' }}>

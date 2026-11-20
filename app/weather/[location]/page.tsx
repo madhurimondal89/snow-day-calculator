@@ -41,8 +41,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const title = `${loc.name} Weather Today, Hourly & 7-Day Forecast | Weather Hub`;
-  const description = `Check ${loc.name} weather today, hourly forecast, temperature, rain probability, wind, humidity, AQI and 7-day extended forecast. Real meteorological data from Weather Hub.`;
+  const title = `${loc.name} Weather Today, Hourly & 7-Day Forecast | Snow Day Calculator Free`;
+  const description = `Check ${loc.name} weather today, hourly forecast, temperature, rain probability, wind, humidity, AQI and 7-day extended forecast. Real meteorological data from Snow Day Calculator Free.`;
   const canonicalUrl = getLocationCanonicalUrl(params.location);
 
   return {
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       url: canonicalUrl,
       type: 'article',
-      siteName: 'Weather Hub',
+      siteName: 'Snow Day Calculator Free',
     },
     twitter: {
       card: 'summary_large_image',
@@ -119,13 +119,13 @@ export default async function LocationWeatherPage({ params }: PageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com',
+        item: process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Weather',
-        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/weather`,
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/weather`,
       },
       {
         '@type': 'ListItem',

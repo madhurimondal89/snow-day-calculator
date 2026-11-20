@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
 
 export const metadata: Metadata = {
   title: 'Terms of Service | Snow Day Calculator Free',
@@ -27,7 +27,7 @@ export default function TermsPage() {
             1. Acceptance of Terms
           </h2>
           <p>
-            By accessing and using Weather Hub, you acknowledge and agree to these Terms of Service. If you disagree with any portion of these terms, please discontinue use of the website.
+            By accessing and using Snow Day Calculator Free, you acknowledge and agree to these Terms of Service. If you disagree with any portion of these terms, please discontinue use of the website.
           </p>
         </section>
 
@@ -36,7 +36,7 @@ export default function TermsPage() {
             2. Informational & Non-Critical Usage
           </h2>
           <p>
-            Weather data, forecasts, radar layers, and Air Quality Indexes provided on Weather Hub are intended solely for general informational and planning purposes. Meteorological forecasts are inherently probabilistic. Do not rely on Weather Hub for life-critical decisions, extreme emergency alerts, marine navigation, or aviation planning. Always consult your national meteorological emergency services during severe weather events.
+            Weather data, forecasts, radar layers, and Air Quality Indexes provided on Snow Day Calculator Free are intended solely for general informational and planning purposes. Meteorological forecasts are inherently probabilistic. Do not rely on Snow Day Calculator Free for life-critical decisions, extreme emergency alerts, marine navigation, or aviation planning. Always consult your national meteorological emergency services during severe weather events.
           </p>
         </section>
 
@@ -45,7 +45,7 @@ export default function TermsPage() {
             3. Disclaimer of Warranties
           </h2>
           <p>
-            Weather Hub is provided on an &ldquo;as is&rdquo; and &ldquo;as available&rdquo; basis without warranties of any kind, whether express or implied, including accuracy, fitness for a particular purpose, or uninterrupted availability.
+            Snow Day Calculator Free is provided on an &ldquo;as is&rdquo; and &ldquo;as available&rdquo; basis without warranties of any kind, whether express or implied, including accuracy, fitness for a particular purpose, or uninterrupted availability.
           </p>
         </section>
       </div>

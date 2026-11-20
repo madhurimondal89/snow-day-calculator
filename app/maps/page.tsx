@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Layers, ChevronRight, Home, Info, ShieldCheck } from 'lucide-react';
 import { WeatherMapLazy } from '@/components/map/WeatherMapLazy';
+import { AdSenseBanner } from '@/components/ads/AdSenseBanner';
 
 export const metadata: Metadata = {
   title: 'Interactive Weather Maps & Live Radar | Snow Day Calculator Free',
@@ -44,6 +45,11 @@ export default function MapsPage() {
       </div>
 
       <WeatherMapLazy height="680px" initialZoom={4} />
+
+      {/* Ad Placement */}
+      <div style={{ margin: '2.5rem 0' }}>
+        <AdSenseBanner slot="7021668643" />
+      </div>
 
       {/* Map Attribution & Information */}
       <div

@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
   const regionLabel = loc.region || loc.country;
   const title = `Snow Day Calculator for ${loc.name}, ${regionLabel}`;
   const description = `Calculate the estimated snow day probability for ${loc.name}, ${regionLabel}. Accurate winter weather forecast analysis including overnight snowfall, ice hazards, and morning commute temperatures.`;
@@ -83,7 +83,7 @@ export default async function LocationSnowDayCalculatorPage({ params }: PageProp
     console.error(`[LocationSnowDayCalculatorPage] Failed fetch for ${params.location}:`, err);
   }
 
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
   const pageUrl = `${siteUrl}/snow-day-calculator/${params.location}`;
 
   const breadcrumbSchema = {

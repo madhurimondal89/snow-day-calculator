@@ -22,8 +22,8 @@ describe('Location Slugs & URL Normalization', () => {
   });
 
   it('should generate canonical URLs correctly', () => {
-    const url = getLocationCanonicalUrl('kolkata', 'https://weatherhub.example.com');
-    expect(url).toBe('https://weatherhub.example.com/weather/kolkata');
+    const url = getLocationCanonicalUrl('kolkata', 'https://snowdaycalculatorfree.com');
+    expect(url).toBe('https://snowdaycalculatorfree.com/weather/kolkata');
   });
 
   it('should parse coordinate slugs gracefully', async () => {

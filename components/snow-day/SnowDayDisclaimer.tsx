@@ -22,7 +22,7 @@ export const SnowDayDisclaimer: React.FC = () => {
         <strong style={{ color: '#f59e0b', display: 'block', marginBottom: '0.2rem' }}>
           Important Notice & Accuracy Disclaimer:
         </strong>
-        This calculator provides a <strong>weather-based estimate only</strong>. Actual school cancellations and schedule changes depend on individual school board districts, municipal plowing resources, student bus route conditions, temperature thresholds, and administrative policies. <strong>Weather Hub is not an official school closure notification service.</strong> Always check with your local school district or municipality for official closure announcements.
+        This calculator provides a <strong>weather-based estimate only</strong>. Actual school cancellations and schedule changes depend on individual school board districts, municipal plowing resources, student bus route conditions, temperature thresholds, and administrative policies. <strong>Snow Day Calculator Free is not an official school closure notification service.</strong> Always check with your local school district or municipality for official closure announcements.
       </div>
     </div>
   );

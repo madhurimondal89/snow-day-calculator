@@ -49,17 +49,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const loc = await resolveLocationFromSlug(params.location);
   if (!loc) {
     return {
-      title: 'Location Not Found | Weather Hub',
+      title: 'Location Not Found | Snow Day Calculator Free',
     };
   }
 
-  const title = `${loc.name} Snow Day Calculator & Snow Probability | Weather Hub`;
+  const title = `${loc.name} Snow Day Calculator & Snow Probability | Snow Day Calculator Free`;
   const description = `Calculate the estimated snow day probability for ${loc.name}. Accurate winter weather forecast analysis including overnight snowfall, ice hazard and morning commute temperatures.`;
-  const canonicalUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/tools/snow-day-calculator/${params.location}`;
+  const canonicalUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/snow-day-calculator/${params.location}`;
 
   return {
     title,
     description,
+    robots: {
+      index: false,
+      follow: true,
+    },
     alternates: {
       canonical: canonicalUrl,
     },
@@ -68,7 +72,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       url: canonicalUrl,
       type: 'website',
-      siteName: 'Weather Hub',
+      siteName: 'Snow Day Calculator Free',
     },
     twitter: {
       card: 'summary_large_image',
@@ -101,25 +105,25 @@ export default async function LocationSnowDayPage({ params }: PageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com',
+        item: process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Tools',
-        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/tools`,
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/tools`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: 'Snow Day Calculator',
-        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/tools/snow-day-calculator`,
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/tools/snow-day-calculator`,
       },
       {
         '@type': 'ListItem',
         position: 4,
         name: `${loc.name} Snow Day Calculator`,
-        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/tools/snow-day-calculator/${params.location}`,
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/tools/snow-day-calculator/${params.location}`,
       },
     ],
   };

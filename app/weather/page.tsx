@@ -10,7 +10,7 @@ import { WeatherIcon } from '@/components/weather/WeatherIcon';
 
 export const revalidate = 900;
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
 
 export const metadata: Metadata = {
   title: 'Weather Forecast — Current & Hourly Weather',
@@ -104,7 +104,7 @@ export default async function WeatherDirectoryPage() {
       {/* Featured Cities Snapshot */}
       <section style={{ marginTop: '2.5rem' }}>
         <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1.25rem' }}>
-          Key Global Weather Hubs
+          Key Global Weather Cities
         </h2>
 
         <div

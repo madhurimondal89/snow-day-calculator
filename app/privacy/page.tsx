@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import { ShieldCheck } from 'lucide-react';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Snow Day Calculator Free',
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
             1. Zero Personal Data Collection
           </h2>
           <p>
-            Weather Hub is designed from the ground up as a privacy-first utility. We do not require accounts, passwords, email addresses, or phone numbers. We do not operate a user tracking database.
+            Snow Day Calculator Free is designed from the ground up as a privacy-first utility. We do not require accounts, passwords, email addresses, or phone numbers. We do not operate a user tracking database.
           </p>
         </section>
 

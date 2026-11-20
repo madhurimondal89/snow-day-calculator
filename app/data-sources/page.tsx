@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import { Database, ExternalLink, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
 
 export const metadata: Metadata = {
   title: 'Data Sources & Meteorological Attribution | Snow Day Calculator Free',
@@ -47,7 +47,7 @@ export default function DataSourcesPage() {
             The Norwegian Meteorological Institute provides high-accuracy numerical weather predictions globally via the official <strong>Locationforecast 2.0</strong> API.
           </p>
           <div style={{ background: 'var(--bg-glass)', padding: '0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            <strong>Compliance Note:</strong> Weather Hub communicates with MET Norway using a descriptive custom User-Agent identifying our domain and contact information, and respects all HTTP caching headers.
+            <strong>Compliance Note:</strong> Snow Day Calculator Free communicates with MET Norway using a descriptive custom User-Agent identifying our domain and contact information, and respects all HTTP caching headers.
           </div>
         </div>
 

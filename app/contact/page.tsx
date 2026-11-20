@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import { Mail, MessageSquare, Globe, Heart } from 'lucide-react';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
 
 export const metadata: Metadata = {
   title: 'Contact & Inquiries | Snow Day Calculator Free',
@@ -30,10 +30,10 @@ export default function ContactPage() {
             For general correspondence, bug reports, and data inquiries:
           </p>
           <a
-            href="mailto:contact@weatherhub.local"
+            href="mailto:contact@snowdaycalculatorfree.com"
             style={{ color: 'var(--accent-primary)', fontWeight: 600, fontSize: '0.9rem' }}
           >
-            contact@weatherhub.local
+            contact@snowdaycalculatorfree.com
           </a>
         </div>
 

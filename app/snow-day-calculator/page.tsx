@@ -10,7 +10,7 @@ import { SNOW_BELT_CITIES } from '@/lib/location/cities';
 
 export const revalidate = 900;
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
 
 export const metadata: Metadata = {
   title: 'Snow Day Calculator — Free Snow Day Predictor',

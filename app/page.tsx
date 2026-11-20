@@ -23,7 +23,7 @@ import { LocationInfo } from '@/lib/weather/types/weather';
 
 export const revalidate = 900; // 15 minutes ISR
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.snowdaycalculatorfree.com').replace(/\/+$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com').replace(/\/+$/, '');
 
 export const metadata: Metadata = {
   title: 'Free Snow Day Calculator — Snow Day Predictor',

@@ -112,7 +112,7 @@ export default async function Image() {
             letterSpacing: '0.04em',
           }}
         >
-          www.snowdaycalculatorfree.com
+          snowdaycalculatorfree.com
         </div>
       </div>
     ),

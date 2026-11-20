@@ -13,7 +13,7 @@ import { UnitSystem } from '../weather/utils';
 
 export class SnowDayPredictionEngine {
   private static DISCLAIMER =
-    'This calculator provides an automated weather-based estimate only. Actual school closures and cancellations depend on local school districts, county transportation conditions, road safety assessments, and municipal policies. Weather Hub is not an official school closure notification service.';
+    'This calculator provides an automated weather-based estimate only. Actual school closures and cancellations depend on local school districts, county transportation conditions, road safety assessments, and municipal policies. Snow Day Calculator Free is not an official school closure notification service.';
 
   /**
    * Calculates the snow day probability from normalized WeatherData

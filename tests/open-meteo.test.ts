@@ -48,6 +48,7 @@ describe('Open-Meteo Normalizer', () => {
         precipitation_probability: [10, 20],
         precipitation: [0.1, 0],
         weather_code: [2, 3],
+        cloud_cover: [45, 50],
         wind_speed_10m: [14.2, 15.0],
         wind_direction_10m: [230, 235],
         is_day: [1, 1],

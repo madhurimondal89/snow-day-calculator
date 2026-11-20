@@ -2,13 +2,14 @@ import React from 'react';
 import { Metadata } from 'next';
 import { Layers, Info, ShieldCheck } from 'lucide-react';
 import { WeatherMapLazy } from '@/components/map/WeatherMapLazy';
+import { AdSenseBanner } from '@/components/ads/AdSenseBanner';
 
 export const metadata: Metadata = {
-  title: 'Interactive Weather Map & Live Radar | Weather Hub',
+  title: 'Interactive Weather Map & Live Radar | Snow Day Calculator Free',
   description:
     'Explore global forecast precipitation, temperature heatmaps, wind speed vectors, cloud cover, and AQI air quality on our interactive high-resolution weather map.',
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weatherhub.example.com'}/weather-map`,
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://snowdaycalculatorfree.com'}/weather-map`,
   },
 };
 
@@ -26,6 +27,11 @@ export default function WeatherMapPage() {
 
       {/* Main Full Height Map */}
       <WeatherMapLazy height="680px" initialZoom={4} />
+
+      {/* Ad Placement */}
+      <div style={{ margin: '2.5rem 0' }}>
+        <AdSenseBanner slot="7021668643" />
+      </div>
 
       {/* Map Information & Data Compliance Notice */}
       <div
